@@ -1,0 +1,23 @@
+<div class="w-full flex justify-center dark">
+  <div
+    class="bg-zinc-800 max-w-7xl w-full h-30 rounded-lg my-12 mx-10 flex justify-between items-center px-18"
+  >
+    <img src="logo.svg" />
+    @if(username(); as username) {
+    <div class="flex items-center gap-2">
+      <p class="dark:text-white m-0 font-semibold">{{ username }}</p>
+      <img class="size-10 bg-red-500 rounded-lg" [src]="avatar()" />
+    </div>
+    }@else {
+    <a
+      href="https://discord.com/oauth2/authorize?client_id=1353396004464099391&response_type=token&redirect_uri=http%3A%2F%2Flocalhost%3A3000&scope=identify+email+connections"
+    >
+      <button
+        class="cursor-pointer rounded-lg bg-blue-500 text-white font-semibold p-2"
+      >
+        <img class="h-4" src="discord-logo-white.svg" />
+      </button>
+    </a>
+    }
+  </div>
+</div>
