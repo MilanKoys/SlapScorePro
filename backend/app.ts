@@ -54,7 +54,7 @@ interface Session {
   created: number;
 }
 
-const port = 3000;
+const port = 4000;
 const mongodbConnectionString: string = "mongodb://127.0.0.1:27017";
 const app = express();
 const wss = new WebSocketServer({ port: port + 30 });
@@ -139,7 +139,7 @@ app.post("/profile", async (req, res) => {
 app.post("/join", async (req, res) => {
   const data = joinSchema.validate(req.body);
   if (data.error) {
-    res.sendStatus(401).json(data.error);
+    res.json(data.error);
     return;
   }
 
@@ -210,12 +210,10 @@ app.get("/lobby/:id/:team/:user", async (req, res) => {
   }
 
   if (foundLobby.homeTeam.find((m) => m === userId)) {
-    isLobby = true;
     currentTeam = Team.Home;
   }
 
   if (foundLobby.awayTeam.find((m) => m === userId)) {
-    isLobby = true;
     currentTeam = Team.Away;
   }
 
@@ -231,26 +229,18 @@ app.get("/lobby/:id/:team/:user", async (req, res) => {
     await lobbies.updateOne({ id }, { $pull: { awayTeam: userId } });
   } else if (currentTeam == Team.Home) {
     await lobbies.updateOne({ id }, { $pull: { homeTeam: userId } });
-  } else {
-    await lobbies.updateOne({ id }, { $pull: { members: userId } });
   }
 
   if (team === "away") {
     await lobbies.updateOne({ id }, { $push: { awayTeam: userId } });
   } else if (team === "home") {
     await lobbies.updateOne({ id }, { $push: { homeTeam: userId } });
-  } else {
-    await lobbies.updateOne({ id }, { $push: { members: userId } });
   }
 
   wss.clients.forEach((client: WebSocketExtended) => {
     if (client.readyState === WebSocket.OPEN && client) {
       if (client?.user) {
-        if (
-          foundLobby.members.find((m) => m === client?.user?.id) ||
-          foundLobby.homeTeam.find((m) => m === client?.user?.id) ||
-          foundLobby.awayTeam.find((m) => m === client?.user?.id)
-        ) {
+        if (foundLobby.members.find((m) => m === client?.user?.id)) {
           console.log(`switch ${userId} team ${team} lobby ${foundLobby.id}`);
           client.send(`switch ${userId} team ${team} lobby ${foundLobby.id}`);
         }
@@ -293,11 +283,7 @@ app.get("/lobby/:id/join", async (req, res) => {
   wss.clients.forEach((client: WebSocketExtended) => {
     if (client.readyState === WebSocket.OPEN && client) {
       if (client?.user) {
-        if (
-          foundLobby.members.find((m) => m === client?.user?.id) ||
-          foundLobby.homeTeam.find((m) => m === client?.user?.id) ||
-          foundLobby.awayTeam.find((m) => m === client?.user?.id)
-        ) {
+        if (foundLobby.members.find((m) => m === client?.user?.id)) {
           console.log(`join ${user.id} lobby ${foundLobby.id}`);
           client.send(`join ${user.id}`);
         }
@@ -326,16 +312,15 @@ app.get("/lobby/:id/leave", async (req, res) => {
     return;
   }
 
-  lobbies.updateOne({ id }, { $pull: { members: user.id } });
+  lobbies.updateOne(
+    { id },
+    { $pull: { members: user.id, awayTeam: user.id, homeTeam: user.id } }
+  );
 
   wss.clients.forEach((client: WebSocketExtended) => {
     if (client.readyState === WebSocket.OPEN && client) {
       if (client?.user) {
-        if (
-          foundLobby.members.find((m) => m === client?.user?.id) ||
-          foundLobby.homeTeam.find((m) => m === client?.user?.id) ||
-          foundLobby.awayTeam.find((m) => m === client?.user?.id)
-        ) {
+        if (foundLobby.members.find((m) => m === client?.user?.id)) {
           console.log(`left ${user.id} lobby ${foundLobby.id}`);
           client.send(`left ${user.id}`);
         }
@@ -394,11 +379,7 @@ app.delete("/lobby/:id", async (req, res) => {
   wss.clients.forEach((client: WebSocketExtended) => {
     if (client.readyState === WebSocket.OPEN && client) {
       if (client?.user) {
-        if (
-          foundLobby.members.find((m) => m === client?.user?.id) ||
-          foundLobby.homeTeam.find((m) => m === client?.user?.id) ||
-          foundLobby.awayTeam.find((m) => m === client?.user?.id)
-        ) {
+        if (foundLobby.members.find((m) => m === client?.user?.id)) {
           console.log(`deleted lobby ${foundLobby.id}`);
           client.send(`deleted ${foundLobby.id}`);
         }
