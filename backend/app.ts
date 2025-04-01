@@ -20,6 +20,34 @@ enum Team {
   Home,
 }
 
+enum Region {
+  EuWest = "eu-west",
+  NaEast = "na-east",
+  NaCentral = "na-central",
+  NaWest = "na-west",
+  OceEast = "oce-east",
+}
+
+enum Arena {
+  Slapstadium = "Slapstadium",
+  Slapville = "Slapville",
+  SlapstadiumMini = "Slapstadium_Mini",
+  TableHockey = "Table_Hockey",
+  Colosseum = "Colosseum",
+  SlapvilleJumbo = "Slapville_Jumbo",
+  Slapstation = "Slapstation",
+  SlapstadiumXL = "Slapstadium_XL",
+  Island = "Island",
+  Obstacles = "Obstacles",
+  ObstaclesXL = "Obstacles_XL",
+}
+
+enum GameMode {
+  Hockey = "hockey",
+  Dodgepuck = "dodgepuck",
+  Tag = "tag",
+}
+
 type WebSocketExtended = WebSocket & {
   user?: User;
 };
@@ -36,6 +64,16 @@ interface User {
 
 interface LobbyOptions {
   selfJoin: boolean;
+  name: string;
+  region: Region;
+  password?: string;
+  creator: string;
+  arena: Arena;
+  gameMode: GameMode;
+  usePeriod: boolean;
+  period?: number;
+  teamSize: number;
+  matchLength: number;
 }
 
 interface Lobby {
@@ -390,10 +428,34 @@ app.delete("/lobby/:id", async (req, res) => {
   res.sendStatus(200);
 });
 
-app.get("/lobby", async (req, res) => {
+const lobbySchema = Joi.object({
+  name: Joi.string().required(),
+  region: Joi.string().required(),
+  password: Joi.string(),
+  creator: Joi.string().required(),
+  arena: Joi.string().required(),
+  gameMode: Joi.string().required(),
+  usePeriod: Joi.boolean().required(),
+  period: Joi.number(),
+  teamSize: Joi.number().required(),
+  matchLength: Joi.number().required(),
+  selfJoin: Joi.boolean(),
+});
+
+app.post("/lobby", async (req, res) => {
   const token: Nullable<string> = req.headers.authorization ?? null;
 
+  const data: Joi.ValidationResult<LobbyOptions> = lobbySchema.validate(
+    req.body
+  );
+
+  if (data.error) {
+    res.status(401).json(data.error);
+    return;
+  }
+
   const user = await userFromToken(token);
+  console.log(user);
 
   if (typeof user === "number" || !isAdmin(user)) {
     res.sendStatus(403);
@@ -410,7 +472,8 @@ app.get("/lobby", async (req, res) => {
     awayTeam: [],
     homeTeam: [],
     options: {
-      selfJoin: false,
+      ...data.value,
+      teamSize: data.value.teamSize ?? 4,
     },
   };
 

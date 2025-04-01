@@ -39,6 +39,9 @@ export type Nullable<T> = null | T;
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
+  private readonly _webSocket: WebSocket = new WebSocket(
+    'http://localhost:4030'
+  );
   private readonly _httpClient: HttpClient = inject(HttpClient);
   private readonly _username: WritableSignal<Nullable<string>> = signal(null);
   private readonly _avatar: WritableSignal<Nullable<string>> = signal(null);
@@ -47,14 +50,19 @@ export class AppComponent {
   protected readonly avatar: Signal<Nullable<string>> =
     this._avatar.asReadonly();
   constructor() {
+    this._webSocket.addEventListener('message', (message) => {
+      console.log(message);
+    });
+
     const fragment = new URLSearchParams(window.location.hash.slice(1));
     let [accessToken, tokenType] = [
       fragment.get('access_token'),
       fragment.get('token_type'),
     ];
-    if (!accessToken || !tokenType) return;
-    localStorage.setItem('token', accessToken);
-    localStorage.setItem('tokenType', tokenType);
+    if (accessToken && tokenType) {
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('tokenType', tokenType);
+    }
 
     accessToken = localStorage.getItem('token');
     tokenType = localStorage.getItem('tokenType');
@@ -88,7 +96,10 @@ export class AppComponent {
     username: string;
   }) {
     this._httpClient
-      .post('http://localhost:4000/join', user)
-      .subscribe((token) => {});
+      .post<{ token: string }>('http://localhost:4000/join', user)
+      .subscribe((result) => {
+        localStorage.setItem('key', result.token);
+        this._webSocket.send(`join$${result.token}`);
+      });
   }
 }

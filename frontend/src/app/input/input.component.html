@@ -1,0 +1,21 @@
+<div class="inputBox relative flex flex-col gap-1 justify-center w-full">
+  <label
+    [ngClass]="value ? 'float-label' : ''"
+    class="absolute top-3 left-2.5"
+    >{{ label() }}</label
+  >
+  <input
+    (input)="onInput($event)"
+    type="text"
+    [(ngModel)]="value"
+    class="border border-slate-200 rounded-lg p-2 pb-1.5 pt-4 w-full"
+  />
+  @if(helperText(); as helperText) {
+  <div class="flex items-center opacity-80 mt-1">
+    <span class="material-symbols-rounded me-1" style="font-size: 17px">
+      info
+    </span>
+    <p class="m-0 dark:text-white text-xs">{{ helperText }}</p>
+  </div>
+  }
+</div>

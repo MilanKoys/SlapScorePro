@@ -1,0 +1,42 @@
+<div
+  class="relative inputBox relative flex flex-col gap-1 justify-center w-full"
+>
+  @if(open()) {
+  <div class="absolute bg-zinc-900 rounded-lg top-13 z-10 w-full">
+    @for(option of options(); track option) {
+    <div
+      tabindex="0"
+      (keydown)="$event.key === 'Enter' ? onSelect(option) : undefined"
+      (click)="onSelect(option)"
+      class="cursor-pointer"
+    >
+      <p class="px-2 py-2 rounded-lg hover:bg-zinc-800">{{ option }}</p>
+    </div>
+    }
+  </div>
+  }
+  <label
+    [ngClass]="value() ? 'float-label' : ''"
+    class="absolute top-3 left-2.5"
+    >{{ label() }}</label
+  >
+  <div
+    tabindex="0"
+    (keydown)="$event.key === 'Enter' ? onOpen(!open()) : undefined"
+    (click)="onOpen(!open())"
+    class="border border-slate-200 rounded-lg w-full h-12 flex items-center justify-between cursor-pointer"
+  >
+    <p class="mt-2 ms-2.5">
+      {{ value() }}
+    </p>
+    <span class="material-symbols-rounded me-3"> keyboard_arrow_down </span>
+  </div>
+  @if(helperText(); as helperText) {
+  <div class="flex items-center opacity-80">
+    <span class="material-symbols-rounded me-1" style="font-size: 17px">
+      info
+    </span>
+    <p class="m-0 dark:text-white text-xs">{{ helperText }}</p>
+  </div>
+  }
+</div>

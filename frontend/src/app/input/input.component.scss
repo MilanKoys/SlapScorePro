@@ -1,0 +1,13 @@
+.inputBox:focus-within label {
+  top: 4px;
+  font-size: 11px;
+}
+
+.inputBox label {
+  transition: 0.3s ease all !important;
+}
+
+.float-label {
+  top: 4px !important;
+  font-size: 11px !important;
+}

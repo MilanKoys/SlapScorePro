@@ -1,0 +1,94 @@
+@if(newLobby(); as lobby) {
+<div
+  class="bg-zinc-800 w-full rounded-lg flex flex-col dark:text-white px-18 py-10 mb-8"
+>
+  <a>http://localhost:3000/lobby/join/{{ lobby.id }}</a>
+</div>
+}@else {
+<form
+  [formGroup]="form"
+  class="bg-zinc-800 w-full rounded-lg flex flex-col dark:text-white px-18 py-10 mb-8"
+>
+  <div class="mb-6 flex flex-col">
+    <h3 class="m-0 text-3xl font-semibold">Create new lobby</h3>
+    <p class="m-0">Create new game lobby</p>
+  </div>
+
+  <div class="flex flex-col gap-3 mb-4">
+    <div class="flex items-center mb-2">
+      <span class="material-symbols-rounded text-blue-500 me-2"> info </span>
+      <p class="m-0 font-semibold">Information</p>
+    </div>
+    <div class="flex flex-col gap-2 lg:flex-row gap-2">
+      <app-input
+        formControlName="name"
+        label="Lobby Name"
+        helperText="Can’t contain spaces or capitalized letters"
+        class="w-full"
+      />
+      <app-dropdown-select
+        formControlName="region"
+        [options]="regions"
+        label="Region"
+        class="w-full"
+      />
+    </div>
+    <app-input formControlName="password" label="Password (Optional)" />
+    <app-input
+      formControlName="creator"
+      label="Creator name"
+      initialValue="Slapscore.pro"
+    />
+  </div>
+
+  <div class="flex flex-col gap-3 mb-4">
+    <div class="flex items-center mb-2">
+      <span class="material-symbols-rounded text-blue-500 me-2">
+        sports_esports</span
+      >
+      <p class="m-0 font-semibold">Game Settings</p>
+    </div>
+    <app-dropdown-select
+      formControlName="arena"
+      [options]="arenas"
+      label="Arena"
+      class="w-full"
+    />
+    <app-dropdown-select
+      [options]="gameModes"
+      formControlName="gameMode"
+      label="Game mode"
+      class="w-full"
+    />
+    <div class="flex flex-col gap-2 lg:flex-row gap-2">
+      <app-dropdown-select
+        [options]="['Yes', 'No']"
+        formControlName="usePeriod"
+        initialValue="No"
+        label="Use period"
+        class="w-full"
+      />
+      <app-input
+        formControlName="period"
+        label="Current period"
+        class="w-full"
+      />
+    </div>
+    <app-input
+      label="Team size limit"
+      formControlName="teamSize"
+      helperText="If nothing selected 4 will be used"
+      class="w-full"
+    />
+    <app-input
+      label="Match length"
+      formControlName="matchLength"
+      helperText="Length in minutes"
+      class="w-full"
+    />
+  </div>
+  <button (click)="create()" class="bg-blue-500 rounded-lg py-2 cursor-pointer">
+    Create
+  </button>
+</form>
+}

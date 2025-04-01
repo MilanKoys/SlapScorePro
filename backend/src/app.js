@@ -55,6 +55,34 @@ var Team;
     Team[Team["Away"] = 0] = "Away";
     Team[Team["Home"] = 1] = "Home";
 })(Team || (Team = {}));
+var Region;
+(function (Region) {
+    Region["EuWest"] = "eu-west";
+    Region["NaEast"] = "na-east";
+    Region["NaCentral"] = "na-central";
+    Region["NaWest"] = "na-west";
+    Region["OceEast"] = "oce-east";
+})(Region || (Region = {}));
+var Arena;
+(function (Arena) {
+    Arena["Slapstadium"] = "Slapstadium";
+    Arena["Slapville"] = "Slapville";
+    Arena["SlapstadiumMini"] = "Slapstadium_Mini";
+    Arena["TableHockey"] = "Table_Hockey";
+    Arena["Colosseum"] = "Colosseum";
+    Arena["SlapvilleJumbo"] = "Slapville_Jumbo";
+    Arena["Slapstation"] = "Slapstation";
+    Arena["SlapstadiumXL"] = "Slapstadium_XL";
+    Arena["Island"] = "Island";
+    Arena["Obstacles"] = "Obstacles";
+    Arena["ObstaclesXL"] = "Obstacles_XL";
+})(Arena || (Arena = {}));
+var GameMode;
+(function (GameMode) {
+    GameMode["Hockey"] = "hockey";
+    GameMode["Dodgepuck"] = "dodgepuck";
+    GameMode["Tag"] = "tag";
+})(GameMode || (GameMode = {}));
 const port = 4000;
 const mongodbConnectionString = "mongodb://127.0.0.1:27017";
 const app = (0, express_1.default)();
@@ -322,9 +350,28 @@ app.delete("/lobby/:id", async (req, res) => {
     });
     res.sendStatus(200);
 });
-app.get("/lobby", async (req, res) => {
+const lobbySchema = joi_1.default.object({
+    name: joi_1.default.string().required(),
+    region: joi_1.default.string().required(),
+    password: joi_1.default.string(),
+    creator: joi_1.default.string().required(),
+    arena: joi_1.default.string().required(),
+    gameMode: joi_1.default.string().required(),
+    usePeriod: joi_1.default.boolean().required(),
+    period: joi_1.default.number(),
+    teamSize: joi_1.default.number().required(),
+    matchLength: joi_1.default.number().required(),
+    selfJoin: joi_1.default.boolean(),
+});
+app.post("/lobby", async (req, res) => {
     const token = req.headers.authorization ?? null;
+    const data = lobbySchema.validate(req.body);
+    if (data.error) {
+        res.status(401).json(data.error);
+        return;
+    }
     const user = await userFromToken(token);
+    console.log(user);
     if (typeof user === "number" || !isAdmin(user)) {
         res.sendStatus(403);
         return;
@@ -338,7 +385,8 @@ app.get("/lobby", async (req, res) => {
         awayTeam: [],
         homeTeam: [],
         options: {
-            selfJoin: false,
+            ...data.value,
+            teamSize: data.value.teamSize ?? 4,
         },
     };
     lobbies.insertOne(lobby);

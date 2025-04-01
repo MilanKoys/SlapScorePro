@@ -1,0 +1,61 @@
+@if(lobby(); as lobby) {
+<div
+  class="relative bg-zinc-800 w-full rounded-xl flex flex-col dark:text-white py-8 mb-8 px-4 items-center"
+>
+  <div class="flex cursor-pointer absolute top-2 left-2">
+    <span class="material-symbols-rounded text-blue-500"> content_copy </span>
+    <p class="text-blue-500">{{ lobby.id }}</p>
+  </div>
+  <div class="flex gap-10">
+    <div class="flex items-center gap-4">
+      <h3 class="font-semibold text-right">AWAY TEAM</h3>
+      <div
+        class="bg-zinc-900 rounded-lg size-20 flex justify-center items-center"
+      >
+        <span
+          class="material-symbols-rounded text-blue-500"
+          style="font-size: 42px"
+        >
+          location_city
+        </span>
+      </div>
+    </div>
+    <div class="flex flex-col items-center relative px-10">
+      <div class="absolute flex flex-col items-center">
+        <p class="text-xs opacity-80">
+          {{ lobby.options.teamSize }}vs{{ lobby.options.teamSize }} -
+          {{ lobby.options.region }}
+        </p>
+        <p class="text-sm font-semibold">{{ lobby.options.name }}</p>
+      </div>
+      <p class="text-5xl font-bold my-10">-</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <div
+        class="bg-zinc-900 rounded-lg size-20 flex justify-center items-center"
+      >
+        <span
+          class="material-symbols-rounded text-blue-500"
+          style="font-size: 42px"
+        >
+          home
+        </span>
+      </div>
+      <h3 class="font-semibold">HOME TEAM</h3>
+    </div>
+  </div>
+</div>
+<h2 class="text-3xl font-semibold mb-3">Unassigned players</h2>
+<div
+  class="relative bg-zinc-800 w-full rounded-xl flex flex-wrap dark:text-white p-4 mb-8 gap-3"
+>
+  @for(player of unassignedPlayers(); track player){
+  <div
+    class="dark:bg-black bg-white flex gap-4 p-4 rounded-lg w-fit max-w-64 w-full"
+  >
+    <div class="rounded-lg bg-red-500 size-12"></div>
+    <p>{{ player.slice(0, 10) }}...</p>
+  </div>
+  }
+</div>
+}
