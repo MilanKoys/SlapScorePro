@@ -83,6 +83,8 @@ interface Lobby {
   members: string[];
   awayTeam: string[];
   homeTeam: string[];
+  homeCapitan: Nullable<string>;
+  awayCapitan: Nullable<string>;
   options: LobbyOptions;
 }
 
@@ -145,6 +147,26 @@ async function handleWebSocketMessage(
       break;
   }
 }
+
+app.get("/profile/:id", async (req, res) => {
+  const users: Collection<User> = database.collection("users");
+  const id: Nullable<string> = req.params.id ?? null;
+
+  const foundUser = await users.findOne({ id });
+
+  if (!foundUser) {
+    res.sendStatus(404);
+    return;
+  }
+
+  res.json({
+    id: foundUser.id,
+    avatar: foundUser.avatar,
+    username: foundUser.username,
+    created: foundUser.created,
+    roles: foundUser.roles,
+  });
+});
 
 app.post("/profile", async (req, res) => {
   const token: Nullable<string> = req.headers.authorization ?? null;
@@ -332,6 +354,49 @@ app.get("/lobby/:id/join", async (req, res) => {
   res.sendStatus(200);
 });
 
+app.get("/lobby/:id/kick/:user", async (req, res) => {
+  const token: Nullable<string> = req.headers.authorization ?? null;
+  const id: Nullable<string> = req.params.id ?? null;
+  const userId: Nullable<string> = req.params.user ?? null;
+  const user = await userFromToken(token);
+
+  if (typeof user === "number") {
+    res.sendStatus(403);
+    return;
+  }
+
+  const lobbies: Collection<Lobby> = database.collection("lobbies");
+  const foundLobby = await lobbies.findOne({ id, members: user.id });
+
+  if (!foundLobby || !userId) {
+    res.sendStatus(401);
+    return;
+  }
+
+  if (foundLobby.owner !== user.id || !isAdmin(user)) {
+    res.sendStatus(403);
+    return;
+  }
+
+  lobbies.updateOne(
+    { id },
+    { $pull: { members: userId, awayTeam: userId, homeTeam: userId } }
+  );
+
+  wss.clients.forEach((client: WebSocketExtended) => {
+    if (client.readyState === WebSocket.OPEN && client) {
+      if (client?.user) {
+        if (foundLobby.members.find((m) => m === client?.user?.id)) {
+          console.log(`kicked ${user.id} lobby ${foundLobby.id}`);
+          client.send(`kicked ${user.id}`);
+        }
+      }
+    }
+  });
+
+  res.sendStatus(200);
+});
+
 app.get("/lobby/:id/leave", async (req, res) => {
   const token: Nullable<string> = req.headers.authorization ?? null;
   const id: Nullable<string> = req.params.id ?? null;
@@ -471,6 +536,8 @@ app.post("/lobby", async (req, res) => {
     members: [user.id],
     awayTeam: [],
     homeTeam: [],
+    awayCapitan: null,
+    homeCapitan: null,
     options: {
       ...data.value,
       teamSize: data.value.teamSize ?? 4,
