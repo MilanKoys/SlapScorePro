@@ -39,13 +39,12 @@ export class LobbyComponent {
     if (!lobby) return [];
     return lobby.members.filter(
       (m) =>
-        lobby.awayTeam.find((p) => p === m) &&
-        lobby.homeTeam.find((p) => p === m)
+        !lobby.awayTeam.find((p) => p === m) ||
+        !lobby.homeTeam.find((p) => p === m)
     );
   });
 
   constructor() {
-    effect(() => console.log(this._lobby()));
     this._lobbyIdentifier.set(this._route.snapshot.paramMap.get('id') ?? null);
     this.load();
   }
