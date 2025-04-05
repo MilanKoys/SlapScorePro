@@ -24,6 +24,9 @@ export class LobbyComponent {
   private readonly _lobby: WritableSignal<Nullable<Lobby>> = signal(null);
   private readonly _lobbyIdentifier: WritableSignal<Nullable<string>> =
     signal(null);
+  protected readonly members: Signal<string[]> = computed(() => {
+    return [''];
+  });
   protected readonly lobby: Signal<Nullable<Lobby>> = this._lobby.asReadonly();
   protected readonly unassignedPlayers: Signal<string[]> = computed(() => {
     const lobby: Nullable<Lobby> = this.lobby();

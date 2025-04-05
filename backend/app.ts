@@ -2,9 +2,10 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { Collection, MongoClient, WithId } from "mongodb";
-import { nanoid } from "nanoid";
+import { nanoid, random } from "nanoid";
 import Joi from "joi";
 import WebSocket, { WebSocketServer } from "ws";
+import { randomUUID } from "crypto";
 
 type Nullable<T> = T | null;
 
@@ -530,7 +531,7 @@ app.post("/lobby", async (req, res) => {
   const lobbies: Collection<Lobby> = database.collection("lobbies");
 
   const lobby: Lobby = {
-    id: nanoid(),
+    id: randomUUID(),
     owner: user.id,
     created: new Date().getTime(),
     members: [user.id],

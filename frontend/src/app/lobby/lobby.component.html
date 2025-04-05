@@ -1,11 +1,7 @@
 @if(lobby(); as lobby) {
 <div
-  class="relative bg-slap-800 w-full rounded-xl flex flex-col dark:text-white py-8 mb-8 px-4 items-center"
+  class="relative bg-slap-800 w-full rounded-xl flex flex-col dark:text-white pt-8 pb-1 mb-8 px-4 items-center"
 >
-  <div class="flex cursor-pointer absolute top-2 left-2">
-    <span class="material-symbols-rounded text-blue-500"> content_copy </span>
-    <p class="text-blue-500">{{ lobby.id }}</p>
-  </div>
   <div class="flex gap-10">
     <div class="flex items-center gap-4">
       <h3 class="font-semibold text-right">AWAY TEAM</h3>
@@ -44,18 +40,144 @@
       <h3 class="font-semibold">HOME TEAM</h3>
     </div>
   </div>
-</div>
-<h2 class="text-3xl font-semibold mb-3">Unassigned players</h2>
-<div
-  class="relative bg-slap-800 w-full rounded-xl flex flex-wrap dark:text-white p-4 mb-8 gap-3"
->
-  @for(player of unassignedPlayers(); track player){
-  <div
-    class="dark:bg-black bg-white flex gap-4 p-4 rounded-lg w-fit max-w-64 w-full"
-  >
-    <div class="rounded-lg bg-red-500 size-12"></div>
-    <p>{{ player.slice(0, 10) }}...</p>
+  <div class="flex justify-center text-slap-600">
+    <p class="me-2">match id:</p>
+    <p class="font-semibold">{{ lobby.id }}</p>
   </div>
-  }
+</div>
+<div class="flex mb-5">
+  <div class="w-full flex justify-center">Away Team</div>
+  <div class="w-full"></div>
+  <div class="w-full flex justify-center">Home Team</div>
+</div>
+<div class="flex justify-center gap-5 mb-10">
+  <div class="w-full">
+    @for(member of lobby.awayTeam; track member) {
+    <div class="w-full flex justify-center">
+      <div
+        class="bg-slap-800 p-6 flex items-center rounded-xl w-full justify-between"
+      >
+        <div class="flex items-center">
+          <img class="size-10 rounded-lg me-3" src="profile.png" alt="" />
+          <div class="justify-center">
+            <div class="flex items-center">
+              <p class="me-1 leading-none text-l font-semibold font-slap">
+                {{ member }}
+              </p>
+              <span
+                class="material-symbols-rounded text-emerald-300"
+                style="font-size: 1rem !important"
+              >
+                verified
+              </span>
+            </div>
+            <div>
+              <p class="text-xs text-emerald-300">Supporter</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-slap-900 py-1 px-2 rounded-md">
+          <div class="flex items-center">
+            <svg
+              fill="#f5f5f5"
+              height="200px"
+              width="200px"
+              version="1.1"
+              id="Capa_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              viewBox="0 0 248.311 248.311"
+              xml:space="preserve"
+              stroke="#f5f5f5"
+              class="h-3 w-3 mr-1"
+            >
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></g>
+              <g id="SVGRepo_iconCarrier">
+                <g>
+                  <path
+                    d="M218.008,42.807c-16.709,0-30.303,13.594-30.303,30.302c0,5.825,1.656,11.269,4.516,15.893l-29.12,33.418 c-3.986-1.932-8.455-3.017-13.173-3.017c-6.165,0-11.902,1.855-16.692,5.029l-15.887-13.543c1.431-3.518,2.227-7.359,2.227-11.384 c0-16.708-13.594-30.302-30.303-30.302S58.971,82.796,58.971,99.504c0,6.314,1.944,12.182,5.261,17.042l-23.367,30.256 c-3.291-1.228-6.849-1.902-10.562-1.902C13.594,144.899,0,158.493,0,175.202c0,16.708,13.594,30.302,30.303,30.302 s30.303-13.594,30.303-30.302c0-6.465-2.042-12.459-5.505-17.385l23.221-30.068c3.399,1.323,7.091,2.057,10.952,2.057 c6.147,0,11.87-1.845,16.652-5.003l15.91,13.563c-1.42,3.505-2.209,7.33-2.209,11.338c0,16.709,13.594,30.303,30.303,30.303 c16.708,0,30.302-13.594,30.302-30.303c0-5.446-1.452-10.557-3.978-14.978l29.537-33.896c3.74,1.655,7.872,2.582,12.218,2.582 c16.709,0,30.303-13.594,30.303-30.303C248.311,56.4,234.717,42.807,218.008,42.807z M218.008,85.411 c-6.784,0-12.303-5.519-12.303-12.303c0-6.783,5.519-12.302,12.303-12.302s12.303,5.519,12.303,12.302 C230.311,79.893,224.792,85.411,218.008,85.411z M149.929,162.007c-6.784,0-12.303-5.519-12.303-12.303 c0-6.783,5.519-12.302,12.303-12.302c6.783,0,12.302,5.519,12.302,12.302C162.23,156.488,156.712,162.007,149.929,162.007z M89.273,111.807c-6.784,0-12.303-5.519-12.303-12.303c0-6.783,5.519-12.302,12.303-12.302s12.303,5.519,12.303,12.302 C101.576,106.288,96.058,111.807,89.273,111.807z M42.605,175.202c0,6.783-5.519,12.302-12.303,12.302S18,181.985,18,175.202 c0-6.784,5.519-12.303,12.303-12.303S42.605,168.418,42.605,175.202z"
+                  ></path>
+                </g>
+              </g>
+            </svg>
+            <p class="text-xs font-bold">1729</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    }
+  </div>
+  <div class="w-full">
+    <div class="">
+      @for(player of unassignedPlayers(); track player){
+      <div class="w-full flex justify-center">
+        <div
+          class="bg-slap-800 p-6 flex items-center rounded-xl w-full justify-between"
+        >
+          <div class="flex items-center">
+            <img class="size-10 rounded-lg me-3" src="profile.png" alt="" />
+            <div class="justify-center">
+              <div class="flex items-center">
+                <p class="me-1 leading-none text-l font-semibold font-slap">
+                  {{ player.slice(0, 15) }}...
+                </p>
+                <span
+                  class="material-symbols-rounded text-emerald-300"
+                  style="font-size: 1rem !important"
+                >
+                  verified
+                </span>
+              </div>
+              <div>
+                <p class="text-xs text-emerald-300">Supporter</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-slap-900 py-1 px-2 rounded-md">
+            <div class="flex items-center">
+              <svg
+                fill="#f5f5f5"
+                height="200px"
+                width="200px"
+                version="1.1"
+                id="Capa_1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                viewBox="0 0 248.311 248.311"
+                xml:space="preserve"
+                stroke="#f5f5f5"
+                class="h-3 w-3 mr-1"
+              >
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  <g>
+                    <path
+                      d="M218.008,42.807c-16.709,0-30.303,13.594-30.303,30.302c0,5.825,1.656,11.269,4.516,15.893l-29.12,33.418 c-3.986-1.932-8.455-3.017-13.173-3.017c-6.165,0-11.902,1.855-16.692,5.029l-15.887-13.543c1.431-3.518,2.227-7.359,2.227-11.384 c0-16.708-13.594-30.302-30.303-30.302S58.971,82.796,58.971,99.504c0,6.314,1.944,12.182,5.261,17.042l-23.367,30.256 c-3.291-1.228-6.849-1.902-10.562-1.902C13.594,144.899,0,158.493,0,175.202c0,16.708,13.594,30.302,30.303,30.302 s30.303-13.594,30.303-30.302c0-6.465-2.042-12.459-5.505-17.385l23.221-30.068c3.399,1.323,7.091,2.057,10.952,2.057 c6.147,0,11.87-1.845,16.652-5.003l15.91,13.563c-1.42,3.505-2.209,7.33-2.209,11.338c0,16.709,13.594,30.303,30.303,30.303 c16.708,0,30.302-13.594,30.302-30.303c0-5.446-1.452-10.557-3.978-14.978l29.537-33.896c3.74,1.655,7.872,2.582,12.218,2.582 c16.709,0,30.303-13.594,30.303-30.303C248.311,56.4,234.717,42.807,218.008,42.807z M218.008,85.411 c-6.784,0-12.303-5.519-12.303-12.303c0-6.783,5.519-12.302,12.303-12.302s12.303,5.519,12.303,12.302 C230.311,79.893,224.792,85.411,218.008,85.411z M149.929,162.007c-6.784,0-12.303-5.519-12.303-12.303 c0-6.783,5.519-12.302,12.303-12.302c6.783,0,12.302,5.519,12.302,12.302C162.23,156.488,156.712,162.007,149.929,162.007z M89.273,111.807c-6.784,0-12.303-5.519-12.303-12.303c0-6.783,5.519-12.302,12.303-12.302s12.303,5.519,12.303,12.302 C101.576,106.288,96.058,111.807,89.273,111.807z M42.605,175.202c0,6.783-5.519,12.302-12.303,12.302S18,181.985,18,175.202 c0-6.784,5.519-12.303,12.303-12.303S42.605,168.418,42.605,175.202z"
+                    ></path>
+                  </g>
+                </g>
+              </svg>
+              <p class="text-xs font-bold">1729</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  <div class="w-full">
+    <div class="bg-slap-800 w-full">.</div>
+  </div>
 </div>
 }

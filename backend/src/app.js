@@ -43,6 +43,7 @@ const mongodb_1 = require("mongodb");
 const nanoid_1 = require("nanoid");
 const joi_1 = __importDefault(require("joi"));
 const ws_1 = __importStar(require("ws"));
+const crypto_1 = require("crypto");
 var Role;
 (function (Role) {
     Role["Admin"] = "Admin";
@@ -127,6 +128,22 @@ async function handleWebSocketMessage(command, value, ws) {
             break;
     }
 }
+app.get("/profile/:id", async (req, res) => {
+    const users = database.collection("users");
+    const id = req.params.id ?? null;
+    const foundUser = await users.findOne({ id });
+    if (!foundUser) {
+        res.sendStatus(404);
+        return;
+    }
+    res.json({
+        id: foundUser.id,
+        avatar: foundUser.avatar,
+        username: foundUser.username,
+        created: foundUser.created,
+        roles: foundUser.roles,
+    });
+});
 app.post("/profile", async (req, res) => {
     const token = req.headers.authorization ?? null;
     const user = await userFromToken(token);
@@ -280,6 +297,38 @@ app.get("/lobby/:id/join", async (req, res) => {
     });
     res.sendStatus(200);
 });
+app.get("/lobby/:id/kick/:user", async (req, res) => {
+    const token = req.headers.authorization ?? null;
+    const id = req.params.id ?? null;
+    const userId = req.params.user ?? null;
+    const user = await userFromToken(token);
+    if (typeof user === "number") {
+        res.sendStatus(403);
+        return;
+    }
+    const lobbies = database.collection("lobbies");
+    const foundLobby = await lobbies.findOne({ id, members: user.id });
+    if (!foundLobby || !userId) {
+        res.sendStatus(401);
+        return;
+    }
+    if (foundLobby.owner !== user.id || !isAdmin(user)) {
+        res.sendStatus(403);
+        return;
+    }
+    lobbies.updateOne({ id }, { $pull: { members: userId, awayTeam: userId, homeTeam: userId } });
+    wss.clients.forEach((client) => {
+        if (client.readyState === ws_1.default.OPEN && client) {
+            if (client?.user) {
+                if (foundLobby.members.find((m) => m === client?.user?.id)) {
+                    console.log(`kicked ${user.id} lobby ${foundLobby.id}`);
+                    client.send(`kicked ${user.id}`);
+                }
+            }
+        }
+    });
+    res.sendStatus(200);
+});
 app.get("/lobby/:id/leave", async (req, res) => {
     const token = req.headers.authorization ?? null;
     const id = req.params.id ?? null;
@@ -378,12 +427,14 @@ app.post("/lobby", async (req, res) => {
     }
     const lobbies = database.collection("lobbies");
     const lobby = {
-        id: (0, nanoid_1.nanoid)(),
+        id: (0, crypto_1.randomUUID)(),
         owner: user.id,
         created: new Date().getTime(),
         members: [user.id],
         awayTeam: [],
         homeTeam: [],
+        awayCapitan: null,
+        homeCapitan: null,
         options: {
             ...data.value,
             teamSize: data.value.teamSize ?? 4,
