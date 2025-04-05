@@ -52,6 +52,7 @@ export class AppComponent {
   protected readonly avatar: Signal<Nullable<string>> =
     this._avatar.asReadonly();
   constructor() {
+    console.log(environment);
     this._webSocket.addEventListener('message', (message) => {
       console.log(message);
     });
