@@ -1,6 +1,6 @@
 @if(lobby(); as lobby) {
 <div
-  class="relative bg-zinc-800 w-full rounded-xl flex flex-col dark:text-white py-8 mb-8 px-4 items-center"
+  class="relative bg-slap-800 w-full rounded-xl flex flex-col dark:text-white py-8 mb-8 px-4 items-center"
 >
   <div class="flex cursor-pointer absolute top-2 left-2">
     <span class="material-symbols-rounded text-blue-500"> content_copy </span>
@@ -10,7 +10,7 @@
     <div class="flex items-center gap-4">
       <h3 class="font-semibold text-right">AWAY TEAM</h3>
       <div
-        class="bg-zinc-900 rounded-lg size-20 flex justify-center items-center"
+        class="bg-slap-900 rounded-lg size-20 flex justify-center items-center"
       >
         <span
           class="material-symbols-rounded text-blue-500"
@@ -32,7 +32,7 @@
     </div>
     <div class="flex items-center gap-4">
       <div
-        class="bg-zinc-900 rounded-lg size-20 flex justify-center items-center"
+        class="bg-slap-900 rounded-lg size-20 flex justify-center items-center"
       >
         <span
           class="material-symbols-rounded text-blue-500"
@@ -47,7 +47,7 @@
 </div>
 <h2 class="text-3xl font-semibold mb-3">Unassigned players</h2>
 <div
-  class="relative bg-zinc-800 w-full rounded-xl flex flex-wrap dark:text-white p-4 mb-8 gap-3"
+  class="relative bg-slap-800 w-full rounded-xl flex flex-wrap dark:text-white p-4 mb-8 gap-3"
 >
   @for(player of unassignedPlayers(); track player){
   <div
