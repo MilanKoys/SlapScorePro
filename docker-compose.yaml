@@ -1,0 +1,26 @@
+services:
+  front-end:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+    networks:
+      - app-network
+    depends_on:
+      - back-end
+
+  back-end:
+    build:
+      context: ./backend 
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
