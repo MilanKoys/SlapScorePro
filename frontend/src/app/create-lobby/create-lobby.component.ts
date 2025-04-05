@@ -19,6 +19,7 @@ import { DropdownSelectComponent } from '../dropdown-select/dropdown-select.comp
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { Arena, CreateLobby, GameMode, Lobby, Region } from '../contracts';
+import { environment } from "../../environments/environment";
 
 type Nullable<T> = T | null;
 
@@ -98,7 +99,7 @@ export class CreateLobbyComponent {
       selfJoin: false,
     };
     this._httpClient
-      .post<Lobby>('http://localhost:4000/lobby', body, {
+      .post<Lobby>(`${environment.api}/lobby`, body, {
         headers: {
           authorization: token,
         },

@@ -95,7 +95,7 @@ interface Session {
   created: number;
 }
 
-const port = 4000;
+const port: number = parseInt(process.env.PORT ?? '4000');
 const mongodbConnectionString: string = "mongodb://127.0.0.1:27017";
 const app = express();
 const wss = new WebSocketServer({ port: port + 30 });

@@ -11,6 +11,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { Nullable } from '../app.component';
 import { Lobby } from '../contracts';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-lobby',
@@ -54,7 +55,7 @@ export class LobbyComponent {
     const token: Nullable<string> = localStorage.getItem('key') ?? null;
     if (!id || !token) return;
     this._httpClient
-      .get<Lobby>(`http://localhost:4000/lobby/${id}`, {
+      .get<Lobby>(`${environment.api}/lobby/${id}`, {
         headers: {
           authorization: token,
         },

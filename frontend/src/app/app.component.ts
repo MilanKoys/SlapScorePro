@@ -41,7 +41,7 @@ export type Nullable<T> = null | T;
 })
 export class AppComponent {
   private readonly _webSocket: WebSocket = new WebSocket(
-    'http://localhost:4030'
+    environment.websocket
   );
   private readonly _httpClient: HttpClient = inject(HttpClient);
   private readonly _username: WritableSignal<Nullable<string>> = signal(null);
@@ -99,7 +99,7 @@ export class AppComponent {
     username: string;
   }) {
     this._httpClient
-      .post<{ token: string }>('http://localhost:4000/join', user)
+      .post<{ token: string }>(`${environment.api}/join`, user)
       .subscribe((result) => {
         localStorage.setItem('key', result.token);
         this._webSocket.send(`join$${result.token}`);

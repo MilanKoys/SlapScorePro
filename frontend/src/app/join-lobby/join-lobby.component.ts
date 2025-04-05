@@ -6,6 +6,7 @@ import {
 } from '@angular/router';
 import { Nullable } from '../app.component';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-join-lobby',
@@ -24,7 +25,7 @@ export class JoinLobbyComponent {
     const lobbyId = this._route.snapshot.paramMap.get('id');
     this._lobbyIdentifier.set(lobbyId);
     this._httpClient
-      .get(`http://localhost:4000/lobby/${lobbyId}/join`)
+      .get(`${environment.api}/lobby/${lobbyId}/join`)
       .subscribe(() => {
         this._router.navigateByUrl(`/lobby/${lobbyId}`);
       });
