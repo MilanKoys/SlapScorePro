@@ -25,7 +25,9 @@ export class LobbyComponent {
   private readonly _lobbyIdentifier: WritableSignal<Nullable<string>> =
     signal(null);
   protected readonly members: Signal<string[]> = computed(() => {
-    return [''];
+    const lobby: Nullable<Lobby> = this._lobby();
+    if (!lobby) return [];
+    return lobby.members.filter(m => !lobby.awayTeam.find(a => a === m) || !lobby.homeTeam.find(h => h === m));
   });
   protected readonly lobby: Signal<Nullable<Lobby>> = this._lobby.asReadonly();
   protected readonly unassignedPlayers: Signal<string[]> = computed(() => {
@@ -33,8 +35,8 @@ export class LobbyComponent {
     if (!lobby) return [];
     return lobby.members.filter(
       (m) =>
-        !lobby.homeTeam.find((p) => p === m) &&
-        !lobby.homeTeam.find((p) => p === m)
+        lobby.homeTeam.find((p) => p === m) ||
+        lobby.homeTeam.find((p) => p === m)
     );
   });
 
