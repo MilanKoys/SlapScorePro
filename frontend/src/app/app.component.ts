@@ -7,6 +7,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { environment } from '../environments/environment';
 
 interface DiscordUser {
   accent_color: number;
@@ -45,6 +46,7 @@ export class AppComponent {
   private readonly _httpClient: HttpClient = inject(HttpClient);
   private readonly _username: WritableSignal<Nullable<string>> = signal(null);
   private readonly _avatar: WritableSignal<Nullable<string>> = signal(null);
+  protected readonly discordRedirectURL: string = environment.discordRedirect;
   protected readonly username: Signal<Nullable<string>> =
     this._username.asReadonly();
   protected readonly avatar: Signal<Nullable<string>> =
