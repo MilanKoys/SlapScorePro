@@ -17,7 +17,8 @@ services:
       context: ./backend 
       dockerfile: Dockerfile
     ports:
-      - "4000:4000"
+      - "4220:4220"
+      - "4250:4250"
     networks:
       - app-network
 
