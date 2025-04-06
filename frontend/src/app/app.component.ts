@@ -51,7 +51,6 @@ export class AppComponent {
   protected readonly avatar: Signal<Nullable<string>> =
     this._avatar.asReadonly();
   constructor() {
-    console.log(environment);
     const fragment = new URLSearchParams(window.location.hash.slice(1));
     let [accessToken, tokenType] = [
       fragment.get('access_token'),

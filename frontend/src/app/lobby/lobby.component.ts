@@ -40,7 +40,6 @@ export class LobbyComponent {
   protected readonly unassignedPlayers: Signal<string[]> = computed(() => {
     const lobby: Nullable<Lobby> = this.lobby();
     if (!lobby) return [];
-    console.log(lobby.awayTeam, lobby.members)
     return lobby.members.filter(
       (m) =>
         !lobby.awayTeam.find((p) => p === m) &&
