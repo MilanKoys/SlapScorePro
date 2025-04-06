@@ -12,6 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Nullable } from '../app.component';
 import { Lobby } from '../contracts';
 import { environment } from '../../environments/environment';
+import { WebsocketService } from '../websocket.service';
 
 @Component({
   selector: 'app-lobby',
@@ -20,6 +21,7 @@ import { environment } from '../../environments/environment';
   styleUrl: './lobby.component.scss',
 })
 export class LobbyComponent {
+  private readonly _websocketService: WebsocketService = inject(WebsocketService);
   private readonly _httpClient: HttpClient = inject(HttpClient);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _lobby: WritableSignal<Nullable<Lobby>> = signal(null);
@@ -38,9 +40,10 @@ export class LobbyComponent {
   protected readonly unassignedPlayers: Signal<string[]> = computed(() => {
     const lobby: Nullable<Lobby> = this.lobby();
     if (!lobby) return [];
+    console.log(lobby.awayTeam, lobby.members)
     return lobby.members.filter(
       (m) =>
-        !lobby.awayTeam.find((p) => p === m) ||
+        !lobby.awayTeam.find((p) => p === m) &&
         !lobby.homeTeam.find((p) => p === m)
     );
   });
@@ -48,6 +51,16 @@ export class LobbyComponent {
   constructor() {
     this._lobbyIdentifier.set(this._route.snapshot.paramMap.get('id') ?? null);
     this.load();
+    this._websocketService.socket.addEventListener("message", event => {
+      if (event.data.includes("lobby")) {
+        const splitData = event.data.split(" ");
+        const lobbyIndex = splitData.findIndex((s: string) => s === "lobby") + 1;
+        if (!lobbyIndex) return;
+        if (splitData[lobbyIndex] === this._lobby()?.id) {
+          this.load();
+        }
+      }
+    });
   }
 
   private load() {

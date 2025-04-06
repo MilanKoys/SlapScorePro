@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { environment } from '../environments/environment';
+import { WebsocketService } from './websocket.service';
 
 interface DiscordUser {
   accent_color: number;
@@ -40,9 +41,7 @@ export type Nullable<T> = null | T;
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  private readonly _webSocket: WebSocket = new WebSocket(
-    environment.websocket
-  );
+  private readonly _websocketService: WebsocketService = inject(WebsocketService);
   private readonly _httpClient: HttpClient = inject(HttpClient);
   private readonly _username: WritableSignal<Nullable<string>> = signal(null);
   private readonly _avatar: WritableSignal<Nullable<string>> = signal(null);
@@ -53,10 +52,6 @@ export class AppComponent {
     this._avatar.asReadonly();
   constructor() {
     console.log(environment);
-    this._webSocket.addEventListener('message', (message) => {
-      console.log(message);
-    });
-
     const fragment = new URLSearchParams(window.location.hash.slice(1));
     let [accessToken, tokenType] = [
       fragment.get('access_token'),
@@ -102,7 +97,7 @@ export class AppComponent {
       .post<{ token: string }>(`${environment.api}/join`, user)
       .subscribe((result) => {
         localStorage.setItem('key', result.token);
-        this._webSocket.send(`join$${result.token}`);
+        this._websocketService.join();
       });
   }
 }

@@ -86,6 +86,7 @@ var GameMode;
 })(GameMode || (GameMode = {}));
 const port = parseInt(process.env.PORT ?? '4000');
 const mongodbConnectionString = process.env.DATABASE ?? "mongodb://127.0.0.1:27017";
+console.log(mongodbConnectionString, "123");
 const app = (0, express_1.default)();
 const wss = new ws_1.WebSocketServer({ port: port + 30 });
 console.log(`Connecting to database using string ${mongodbConnectionString}`);
