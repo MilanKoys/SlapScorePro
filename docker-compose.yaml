@@ -14,7 +14,7 @@ services:
 
   back-end:
     build:
-      context: ./backend
+      context: ./backend 
       dockerfile: Dockerfile
     ports:
       - "4220:4220"
@@ -32,14 +32,11 @@ services:
     networks:
       - app-network
     volumes:
-      - mongo-data:/data/db
+      - /data/db
+    environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: somepassword
 
-  networks:
-    app-network:
-      driver: bridge
-
-  volumes:
-    mongo-data:
-      driver: local
+networks:
+  app-network:
+    driver: bridge
