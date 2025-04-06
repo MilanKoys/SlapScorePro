@@ -36,10 +36,10 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: somepassword
 
-networks:
-  app-network:
-    driver: bridge
+  networks:
+    app-network:
+      driver: bridge
 
-volumes:
-  mongo-data:
-    driver: local
+  volumes:
+    mongo-data:
+      driver: local
