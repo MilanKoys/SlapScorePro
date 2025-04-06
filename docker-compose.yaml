@@ -14,14 +14,30 @@ services:
 
   back-end:
     build:
-      context: ./backend 
+      context: ./backend
       dockerfile: Dockerfile
     ports:
       - "4220:4220"
       - "4250:4250"
     networks:
       - app-network
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+    volumes:
+      - mongo-data:/data/db
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
