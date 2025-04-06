@@ -7,8 +7,10 @@
   "type": "commonjs",
   "main": "./src/app.js",
   "scripts": {
-    "start": "tsc . & node ./src/app.js",
-    "dev": "tsc --watch & nodemon ./src/app.js"
+    "start": "tsc & node ./src/app.js",
+    "dev": "tsc --watch & nodemon ./src/app.js",
+    "build": "tsc"
+
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
