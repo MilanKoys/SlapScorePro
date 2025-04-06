@@ -96,9 +96,11 @@ interface Session {
 }
 
 const port: number = parseInt(process.env.PORT ?? '4000');
-const mongodbConnectionString: string = "mongodb://127.0.0.1:27017";
+const mongodbConnectionString: string = process.env.DATABASE ?? "mongodb://127.0.0.1:27017";
 const app = express();
 const wss = new WebSocketServer({ port: port + 30 });
+
+console.log(`Connecting to database using string ${mongodbConnectionString}`);
 
 const database = new MongoClient(mongodbConnectionString).db("SlapScorePro");
 
